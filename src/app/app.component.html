@@ -1,0 +1,27 @@
+<div class="app-container">
+  <header class="app-header">
+    <img src="assets/images/logo.png" alt="Logo" class="logo" />
+    <h1 class="title">{{ title }}</h1>
+    <div class="spacer"></div>
+  </header>
+
+  <main class="app-main">
+    <div class="game-area">
+      <div class="side-panel">
+        <app-controls-panel></app-controls-panel>
+        <app-player-turn-indicator></app-player-turn-indicator>
+        <app-score-board></app-score-board>
+      </div>
+      <div class="board-panel">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+
+    <app-move-history></app-move-history>
+    <app-settings></app-settings>
+  </main>
+
+  <footer class="app-footer">
+    <small>&copy; {{ currentYear }} - Juego Encerrando colores</small>
+  </footer>
+</div>

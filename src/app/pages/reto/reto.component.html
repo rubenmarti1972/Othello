@@ -1,0 +1,10 @@
+<div class="reto-container">
+  <h2>Reto {{ retoId }}</h2>
+  <div class="reto-area">
+    <app-score-board></app-score-board>
+    <app-game-board></app-game-board>
+  </div>
+  <button (click)="nextReto()" class="next-btn">
+    Ir a Reto {{ retoId + 1 }}
+  </button>
+</div>
