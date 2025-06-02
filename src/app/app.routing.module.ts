@@ -1,15 +1,17 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RetoComponent } from './pages/reto/reto.component';
-import { AppComponent } from './app.component';
-import { HomeComponent } from './pages/home/home.component';
 import { GameBoardComponent } from './pages/game-board/game-board.component';
+import { Variant1GameBoardComponent } from './pages/variant1GameBoard/variant1GameBoard.component';
+import { Variant2GameBoardComponent } from './pages/variant2GameBoard/variant2GameBoard.component';
 
 
 const routes: Routes = [
-  { path: '', component: GameBoardComponent },         // tablero normal
-  { path: 'reto/:id', component: GameBoardComponent }, // tablero de reto
+  { path: '', component: GameBoardComponent },
+  { path: 'reto/9', component: Variant1GameBoardComponent, pathMatch: 'full'},
+  { path: 'reto/10', component: Variant2GameBoardComponent, pathMatch: 'full'},
+  { path: 'reto/:id', component: GameBoardComponent },
+
   { path: '**', redirectTo: '' }
 ];
 

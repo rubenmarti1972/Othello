@@ -1,10 +1,14 @@
-<div class="reto-container">
+<!-- <div class="reto-container">
   <h2>Reto {{ retoId }}</h2>
   <div class="reto-area">
     <app-score-board></app-score-board>
-    <app-game-board></app-game-board>
+    <app-variant1-game-board *ngIf="retoId === 9"></app-variant1-game-board>
+    <app-variant2-game-board *ngIf="retoId === 10"></app-variant2-game-board>
+    <app-game-board *ngIf="retoId !== 9"></app-game-board>
   </div>
   <button (click)="nextReto()" class="next-btn">
     Ir a Reto {{ retoId + 1 }}
   </button>
-</div>
+</div> -->
+
+

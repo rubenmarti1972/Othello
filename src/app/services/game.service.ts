@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export type CellState = 'empty' | 'black' | 'white';
+export type CellState = 'empty' | 'black' | 'white' | 'dual';
 export type Player    = 'black' | 'white';
 
 export interface Move {
@@ -67,10 +67,7 @@ export class GameService {
     this.emitBoard();
   }
 
-  /** Intenta colocar ficha en (r,c). Si es válido, voltea piezas, actualiza estado y cambia turno */
-
-
-  tryMove(r: number, c: number): void {
+tryMove(r: number, c: number): void {
   if (
     this.validCellsForRetoRestricto.size > 0 &&
     !this.validCellsForRetoRestricto.has(`${r},${c}`)
@@ -84,7 +81,14 @@ export class GameService {
   if (flips.length === 0) return;
 
   this.board[r][c] = this.currentPlayer;
-  flips.forEach(([i, j]) => this.board[i][j] = this.currentPlayer);
+
+  // Solo convierte fichas que NO son duales
+flips.forEach(([i, j]) => {
+  if (this.board[i][j] !== 'dual') {
+    this.board[i][j] = this.currentPlayer;
+  }
+});
+
 
   const hist = [...this.movesSubject.value, { player: this.currentPlayer, row: r, col: c }];
   this.movesSubject.next(hist);
@@ -93,29 +97,46 @@ export class GameService {
   this.advanceTurn();
 }
 
+private getFlips(r: number, c: number, player: Player): [number, number][] {
+  const opponent: CellState = player === 'black' ? 'white' : 'black';
+  const flips: [number, number][] = [];
 
+  for (const [dr, dc] of this.directions) {
+    let i = r + dr, j = c + dc;
+    const line: [number, number][] = [];
 
-  /** Devuelve lista de coordenadas a voltear si move válido, o [] */
-  private getFlips(r: number, c: number, player: Player): [number,number][] {
-    const opponent: CellState = player === 'black' ? 'white' : 'black';
-    const flips: [number,number][] = [];
+    while (this.isOnBoard(i, j)) {
+      const cell = this.board[i][j];
 
-    for (const [dr, dc] of this.directions) {
-      let i = r + dr, j = c + dc;
-      const line: [number,number][] = [];
-
-      // camina mientras haya fichas del oponente
-      while (this.isOnBoard(i,j) && this.board[i][j] === opponent) {
-        line.push([i,j]);
-        i += dr; j += dc;
+      if (cell === 'dual') {
+        // Dual se ignora, pero no se agrega al flip
+        i += dr;
+        j += dc;
+        continue;
       }
-      // si termina en ficha propia, es válido
-      if (line.length > 0 && this.isOnBoard(i,j) && this.board[i][j] === player) {
-        flips.push(...line);
+
+      if (cell === opponent) {
+        line.push([i, j]);
+      } else {
+        break; // si es vacío o propio
       }
+
+      i += dr;
+      j += dc;
     }
-    return flips;
+
+    if (
+      line.length > 0 &&
+      this.isOnBoard(i, j) &&
+      this.board[i][j] === player
+    ) {
+      flips.push(...line);
+    }
   }
+
+  return flips;
+}
+
 
   /** Comprueba límites */
   private isOnBoard(i: number, j: number): boolean {
@@ -393,7 +414,7 @@ applyReto8(): void {
   this.emitBoard();
 }
 
-applyReto9(): void {
+/* applyReto9(): void {
   const rows = 6;
   const cols = 6;
   this.size = rows;
@@ -410,6 +431,30 @@ applyReto9(): void {
   // Puedes usar un nuevo tipo por ejemplo 'dual'
   (this.board as any)[2][3] = 'dual';
   (this.board as any)[3][2] = 'dual';
+
+  this.currentPlayer = 'black';
+  this.currentPlayerSubject.next(this.currentPlayer);
+  this.movesSubject.next([]);
+  this.emitBoard();
+} */
+
+applyReto9(): void {
+  this.validCellsForRetoRestricto = new Set();
+
+  this.size = 6;
+  this.board = Array.from({ length: this.size },
+    () => Array<CellState>(this.size).fill('empty'));
+
+  // Coloca algunas fichas duales, blancas y negras para probar
+  this.board[1][1] = 'dual';
+  this.board[1][4] = 'dual';
+  this.board[2][2] = 'white';
+  this.board[2][3] = 'black';
+  this.board[3][2] = 'black';
+  this.board[3][3] = 'white';
+  this.board[4][1] = 'dual';
+  this.board[4][4] = 'dual';
+
 
   this.currentPlayer = 'black';
   this.currentPlayerSubject.next(this.currentPlayer);
