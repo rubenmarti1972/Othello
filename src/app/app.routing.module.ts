@@ -11,6 +11,8 @@ const routes: Routes = [
   { path: 'reto/9', component: Variant1GameBoardComponent, pathMatch: 'full'},
   { path: 'reto/10', component: Variant2GameBoardComponent, pathMatch: 'full'},
   { path: 'reto/:id', component: GameBoardComponent },
+  { path: 'online/:gameId', component: GameBoardComponent },
+
 
   { path: '**', redirectTo: '' }
 ];

@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { GameModeService } from './gameMode.service';
 
 export type CellState = 'empty' | 'black' | 'white' | 'dual';
 export type Player    = 'black' | 'white';
+
+export type GameMode = 'pvp' | 'cpu';
 
 export interface Move {
   player: Player;
@@ -38,7 +41,7 @@ export class GameService {
     [+1, -1], [+1,  0], [+1, +1]
   ];
 
-  constructor() {
+  constructor(private modeService: GameModeService) {
     this.reset();
   }
 
@@ -145,18 +148,23 @@ private getFlips(r: number, c: number, player: Player): [number, number][] {
 
   /** Avanza al siguiente turno, pasando si no hay movimientos */
   private advanceTurn(): void {
-    const next: Player = this.currentPlayer === 'black' ? 'white' : 'black';
-    // si el siguiente no tiene jugadas válidas, permanece o fin de juego
-    if (this.hasValidMove(next)) {
-      this.currentPlayer = next;
-    } else if (this.hasValidMove(this.currentPlayer)) {
-      // se pasa el turno de facto: mismo jugador
-    } else {
-      // ninguno tiene movimientos: partida termina
-      // aquí podrías emitir un evento de fin de juego
-    }
-    this.currentPlayerSubject.next(this.currentPlayer);
+  const next: Player = this.currentPlayer === 'black' ? 'white' : 'black';
+
+  if (this.hasValidMove(next)) {
+    this.currentPlayer = next;
+  } else if (!this.hasValidMove(this.currentPlayer)) {
+    // ninguno tiene movimientos: partida termina
+    return;
   }
+
+  this.currentPlayerSubject.next(this.currentPlayer);
+
+  // ⚠️ Ejecuta CPU después de haber actualizado el turno
+  if (this.modeService.currentMode === 'cpu' && this.currentPlayer === 'white') {
+    setTimeout(() => this.cpuMove(), 500);
+  }
+}
+
 
   /** ¿Tiene el jugador al menos un movimiento válido? */
   private hasValidMove(player: Player): boolean {
@@ -169,6 +177,25 @@ private getFlips(r: number, c: number, player: Player): [number, number][] {
     }
     return false;
   }
+
+  private cpuMove(): void {
+  const validMoves = this.findAllValidMoves('white');
+  if (validMoves.length === 0) return;
+  const [r, c] = validMoves[Math.floor(Math.random() * validMoves.length)];
+  this.tryMove(r, c);
+}
+
+private findAllValidMoves(player: Player): [number, number][] {
+  const moves: [number, number][] = [];
+  for (let i = 0; i < this.size; i++) {
+    for (let j = 0; j < this.size; j++) {
+      if (this.board[i][j] === 'empty' && this.getFlips(i, j, player).length > 0) {
+        moves.push([i, j]);
+      }
+    }
+  }
+  return moves;
+}
 
   /** Emite tablero y recuenta fichas */
   private emitBoard(): void {
@@ -189,7 +216,6 @@ private getFlips(r: number, c: number, player: Player): [number, number][] {
     this.blackCountSubject.next(b);
     this.whiteCountSubject.next(w);
   }
-
 
   applyInicio(): void {
   this.size = 4;

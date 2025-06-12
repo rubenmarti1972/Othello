@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { GameModeService } from './gameMode.service';
 
 export type CellState = 'empty' | 'black' | 'white' | 'blue';
 export type Player = 'black' | 'white';
@@ -33,7 +34,7 @@ export class Variant2GameService {
   blackScore$ = this.blackScoreSubject.asObservable();
   whiteScore$ = this.whiteScoreSubject.asObservable();
 
-  constructor() {
+  constructor(private modeService: GameModeService) {
     this.applyReto10();
   }
 
@@ -121,10 +122,35 @@ export class Variant2GameService {
     }
   }
 
+
+
   private advanceTurn(): void {
-    this.currentPlayer = this.currentPlayer === 'black' ? 'white' : 'black';
-    this.currentPlayerSubject.next(this.currentPlayer);
+  this.currentPlayer = this.currentPlayer === 'black' ? 'white' : 'black';
+  this.currentPlayerSubject.next(this.currentPlayer);
+
+  if (this.modeService.currentMode === 'cpu' && this.currentPlayer === 'white') {
+    setTimeout(() => this.cpuMove(), 500); // pequeña pausa
   }
+}
+
+private cpuMove(): void {
+  const validMoves = this.findAllValidMoves('white');
+  if (validMoves.length === 0) return;
+  const [r, c] = validMoves[Math.floor(Math.random() * validMoves.length)];
+  this.tryMove(r, c);
+}
+
+private findAllValidMoves(player: Player): [number, number][] {
+  const moves: [number, number][] = [];
+  for (let i = 0; i < this.size; i++) {
+    for (let j = 0; j < this.size; j++) {
+      if (this.board[i][j] === 'empty' && this.getFlips(i, j, player).length > 0) {
+        moves.push([i, j]);
+      }
+    }
+  }
+  return moves;
+}
 
   private emitBoard(): void {
     this.boardSubject.next(this.board.map(row => [...row]));

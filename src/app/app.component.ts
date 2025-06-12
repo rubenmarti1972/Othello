@@ -8,6 +8,7 @@ import { PlayerTurnIndicatorComponent } from './pages/player-turn-indicator/play
 import { ScoreBoardComponent } from './pages/score-board/score-board.component';
 import { MoveHistoryComponent } from './pages/move-history/move-history.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { GameModeService } from './services/gameMode.service';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,18 @@ import { SettingsComponent } from './pages/settings/settings.component';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+   mode: 'pvp' | 'cpu' = 'pvp';
   title = 'Encerrando colores';
   currentYear = new Date().getFullYear();
-}
+  constructor(public modeService: GameModeService) {}
 
+  ngOnInit() {
+    this.mode = this.modeService.currentMode;
+  }
+   setMode(mode: 'pvp' | 'cpu') {
+    this.modeService.setMode(mode);
+    this.mode = mode;
+  }
+
+}

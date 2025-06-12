@@ -8,6 +8,24 @@
   <main class="app-main">
     <div class="game-area">
       <div class="side-panel">
+        <!-- 👇 Este mode-selector es lo que vamos a estilizar -->
+        <div class="mode-selector">
+          <label [class.active]="mode === 'pvp'" title="Jugador 1 vs Jugador 2">
+
+            <input type="radio" name="mode" (change)="setMode('pvp')" [checked]="mode === 'pvp'" />
+            <i class="fas fa-user" style="color: red;"></i>
+            <i class="fas fa-user" style="color: green;"></i>
+            <span>Jugador vs Jugador</span>
+          </label>
+
+          <label [class.active]="mode === 'cpu'" title="Jugador 1 vs Jugador 2">
+            <input type="radio" name="mode" (change)="setMode('cpu')" [checked]="mode === 'cpu'" />
+            <i class="fas fa-user" style="color: red;"></i>
+            <i class="fas fa-desktop" style="color: green;"></i>
+            <span>Jugador vs PC</span>
+          </label>
+        </div>
+
         <app-controls-panel></app-controls-panel>
         <app-player-turn-indicator></app-player-turn-indicator>
         <app-score-board></app-score-board>
@@ -17,7 +35,7 @@
       </div>
     </div>
 
-    <app-move-history></app-move-history>
+   <!--  <app-move-history></app-move-history> -->
     <app-settings></app-settings>
   </main>
 
