@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/othello",
+    "public": "dist/othello/browser/",
     "ignore": [
       "firebase.json",
       "**/.*",
