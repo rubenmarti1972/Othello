@@ -14,7 +14,7 @@ import { GameService } from '../../services/game.service';
 })
 export class SettingsComponent {
   boardSizes = [4, 6, 8];
-  selectedSize = 6;
+  selectedSize = 4;
   constructor(private game: GameService) {}
   apply() { this.game.setSize(Number(this.selectedSize)); }
 }

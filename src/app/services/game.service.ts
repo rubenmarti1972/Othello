@@ -42,7 +42,7 @@ export class GameService {
   ];
 
   constructor(private modeService: GameModeService) {
-    this.reset();
+    //this.reset();
   }
 
   /** Cambia el tamaño del tablero y reinicia */
@@ -217,7 +217,7 @@ private findAllValidMoves(player: Player): [number, number][] {
     this.whiteCountSubject.next(w);
   }
 
-  applyInicio(): void {
+/*   applyInicio(): void {
   this.size = 4;
   this.board = Array.from({ length: 4 }, () =>
     Array<CellState>(4).fill('empty')
@@ -231,7 +231,7 @@ private findAllValidMoves(player: Player): [number, number][] {
   this.currentPlayerSubject.next(this.currentPlayer);
   this.movesSubject.next([]);
   this.emitBoard();
-}
+} */
   applyReto1(): void {
    this.validCellsForRetoRestricto.clear();
     this.size = 4;

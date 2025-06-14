@@ -9,6 +9,7 @@ import { ScoreBoardComponent } from './pages/score-board/score-board.component';
 import { MoveHistoryComponent } from './pages/move-history/move-history.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { GameModeService } from './services/gameMode.service';
+import { InstructionsComponent } from './pages/instructions/instructions.component';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ import { GameModeService } from './services/gameMode.service';
     PlayerTurnIndicatorComponent,
     ScoreBoardComponent,
     MoveHistoryComponent,
-    SettingsComponent
+    SettingsComponent,
+    InstructionsComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
